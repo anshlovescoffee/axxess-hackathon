@@ -1,0 +1,7 @@
+services:
+  api:
+    build: api/
+
+  # frontend:
+  #   build:
+  #     hospice-frontend/
