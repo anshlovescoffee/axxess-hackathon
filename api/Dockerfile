@@ -13,4 +13,5 @@ RUN /env/venv/bin/uv pip install -r requirements.txt --system
 
 COPY . . 
 RUN /env/venv/bin/uv run gen_patients.py 
+
 CMD ["/env/venv/bin/uv", "run", "python", "app.py"]
