@@ -2,6 +2,7 @@ CREATE DATABASE Patients_DB;
 USE Patients_DB;
 CREATE TABLE Patients (
 	PID INT PRIMARY KEY,
+    DOB DATE,
     P_Name VARCHAR(50),
     SSN INT,
     Address VARCHAR(50),
