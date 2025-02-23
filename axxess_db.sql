@@ -35,18 +35,13 @@ CREATE TABLE Visitation_log (
     FOREIGN KEY (PID) REFERENCES Patients(PID)
 );
 
-CREATE TABLE Med (
-	Med_Name CHAR(50) PRIMARY KEY,
-    Total_Amount DECIMAL(5,2),
-    Unit CHAR(10)
-);
 
 CREATE TABLE Patient_Meds (
 	PID INT PRIMARY KEY,
     Med_Name CHAR(50),
     Dosage DECIMAL(5.2),
     Unit CHAR(10),
-	Remaining DECIMAL(5,2),
+	Remaining INT,
     Exp_Date DATE,
     FOREIGN KEY (PID) REFERENCES Patients(PID),
     FOREIGN KEY (Med_Name) REFERENCES Med(Med_Name)
