@@ -1,29 +1,21 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import pandas as pd
+import numpy as np
 
 app = Flask(__name__)
 CORS(app)  # Allows requests from React frontend
 
 # Sample data
-inventory = pd.DataFrame([
-    {
-        "item": "Wheelchair",
-        "quantity": 10,
-        "restock_threshold": 5
-    },
-    {
-        'item': 'Bandages',
-        'quantity': 100,
-        'restock_threshold': 50
-    },
-    {
-        'item': 'Medications',
-        'quantity': 50,
-        'restock_threshold': 25
-    }
-])
+inventory = pd.DataFrame({
+    "item": ["wheelchair", "bandages", "medications"],
+    "quantity": [10, 100, 50],
+    "restock_threshold": [5, 50, 25]
+})
 inventory.set_index(inventory['item'])
+
+print(inventory)
+exit()
 
 @app.route("/")
 def home():
@@ -38,14 +30,15 @@ def find_patient():
 
     return jsonify({"message": "Patient not found"})
 
-@app.route("/inventory")
-def get_inventory():
-    return jsonify(inventory.to_dict(orient='list'))
+# @app.route("/inventory")
+# def get_inventory():
+#     return jsonify(inventory.to_dict(orient='list'))
 
 @app.route('/inventory')
 def get_inventory_item():
     search_term = request.args.get('search_term').lower()
-    result = np.where(inventory['item'] == search_term)
+    result = inventory.loc[inventory['item'] == search_term]
+
     return jsonify(result.to_dict(orient='list'))
 
 @app.route('/fill_inventory', methods=['POST'])
