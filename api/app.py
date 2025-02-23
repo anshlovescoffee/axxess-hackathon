@@ -42,6 +42,7 @@ conn.close()
 def home():
     return jsonify({"message": "Welcome to the Hospice Management API"})
 
+<<<<<<< HEAD
 @app.route('/inventory_search')
 def get_inventory_item():
     search_term = request.args.get('search_term')

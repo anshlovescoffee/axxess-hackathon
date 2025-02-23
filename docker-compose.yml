@@ -33,9 +33,11 @@ services:
       db:
         condition: service_healthy
 
-  # frontend:
-  #   build:
-  #     hospice-frontend/
+  frontend:
+    build:
+      ax/
+    ports:
+      - '3000:3000'
 
 volumes:
   pgdata:
