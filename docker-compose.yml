@@ -7,7 +7,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data 
     ports:
-      - '5432:5432'
+      - '0.0.0.0:5432:5432'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -23,7 +23,7 @@ services:
     container_name: api
     build: api/
     ports:
-      - '5000:5000'
+      - '0.0.0.0:8000:5000'
     environment:
       POSTGRES_HOST: db
       POSTGRES_PORT: "5432"
