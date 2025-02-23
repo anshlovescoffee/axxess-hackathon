@@ -40,15 +40,6 @@ conn.close()
 def home():
     return jsonify({"message": "Welcome to the Hospice Management API"})
   
-# TODO: finish this shit
-@app.route('/patient')
-def find_patient():
-    result = None
-
-    # some db searching shit here
-
-    return jsonify({"message": "Patient not found"})
-
 @app.route('/inventory')
 def get_inventory():
     return jsonify(inventory.to_dict(orient='index'))
@@ -142,6 +133,60 @@ def get_all_patients():
         cursor.close()
         conn.close()
 
+# @app.route('/patients', methods=['GET'])
+# def get_all_patients():
+#     pid = request.args.get('pid')
+#     conn = psycopg2.connect(
+#         database="db",
+#         user=os.environ['POSTGRES_USER'],
+#         password=os.environ['POSTGRES_PASSWORD'],
+#         host=os.environ["POSTGRES_HOST"],
+#         port=os.environ["POSTGRES_PORT"]
+#     )
+#     cursor = conn.cursor()
+#
+#     if not pid:
+#         try:
+#             # Fetch all patients from the database
+#             cursor.execute("SELECT * FROM Patients;")
+#             patients = cursor.fetchall()
+#
+#             # Convert results to a list of dictionaries
+#             patients_list = []
+#             column_names = [desc[0] for desc in cursor.description]  # Get column names
+#             for patient in patients:
+#                 patients_list.append(dict(zip(column_names, patient)))
+#
+#             return jsonify({
+#                 "success": True,
+#                 "patients": patients_list
+#             }), 200
+#
+#         except Exception as e:
+#             return jsonify({
+#                 "success": False,
+#                 "error": str(e)
+#             }), 500
+#
+#         finally:
+#             cursor.close()
+#             conn.close()
+#
+#         # Specific id
+#         cursor.execute('SELECT * FROM Patients WHERE PID = %s;', (pid,))
+#         patient = cursor.fetchone()
+#
+#         if not patient:
+#             return jsonify({
+#             "success": False,
+#             "error": "Patient not found"
+#             }), 404
+#
+#         return jsonify({
+#             "success": True,
+#             "patient": dict(zip(column_names, patient))
+#         }), 200
+#
 def cleanup():
     cursor.close()
     conn.close()
