@@ -9,11 +9,10 @@ CORS(app)
 inventory = pd.read_csv('sample_data_ext.csv')
 inventory.set_index('item', inplace=True)
 
-# Sample data
 @app.route("/")
 def home():
     return jsonify({"message": "Welcome to the Hospice Management API"})
-
+  
 # TODO: finish this shit
 @app.route('/patient')
 def find_patient():
@@ -35,4 +34,4 @@ def get_inventory_item():
     return jsonify(result.to_dict(orient='list'))
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True) 
+    app.run(host="0.0.0.0", port=5000, debug=True)
