@@ -1,37 +1,29 @@
+import os
+import pandas as pd
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import pandas as pd
-import numpy as np
+
+# Ensure the inventory generator script is used
+from gen_inventory import inventory
 
 app = Flask(__name__)
 CORS(app)
 
-inventory = pd.read_csv('sample_data_ext.csv')
-inventory.set_index('item', inplace=True)
+# Load inventory (ensures sample_data.csv is used)
+csv_file = "sample_data.csv"
+if not os.path.exists(csv_file):
+    inventory.to_csv(csv_file, index=False)
+
+inventory = pd.read_csv(csv_file)
+inventory.set_index("item", inplace=True)
 
 @app.route("/")
 def home():
     return jsonify({"message": "Welcome to the Hospice Management API"})
-  
-# TODO: finish this shit
-@app.route('/patient')
-def find_patient():
-    result = None
 
-    # some db searching shit here
-
-    return jsonify({"message": "Patient not found"})
-
-@app.route('/inventory')
+@app.route('/inventory', methods=['GET'])
 def get_inventory():
     return jsonify(inventory.to_dict(orient='index'))
-
-@app.route('/inventory_search')
-def get_inventory_item():
-    search_term = request.args.get('search_term').lower()
-    result = inventory.loc[inventory['item'] == search_term]
-
-    return jsonify(result.to_dict(orient='list'))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

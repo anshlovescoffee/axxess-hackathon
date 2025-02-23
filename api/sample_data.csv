@@ -1,7 +1,6 @@
 item,quantity_unit,quantity,restock_threshold
 wheelchair,each,10,5
 bandages,box,100,50
-viagra,mg,50,25
 syringes,each,200,100
 insulin,vial,30,10
 antibiotics,pill,500,200
