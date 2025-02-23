@@ -12,7 +12,7 @@ import { AddItemModal } from "@/components/add-item-modal"
 const API_URL = "http://localhost:8000/api"
 
 export default function InventoryPage() {
-  const [inventory, setInventory] = useState([])
+  const [inventory, setInventory] = useState({})
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isLoading, setIsLoading] = useState(true)
@@ -68,6 +68,13 @@ export default function InventoryPage() {
       setError(err.message)
     }
   }
+
+  // Convert inventory object to array for rendering
+  const inventoryItems = Object.entries(inventory).map(([name, data]) => ({
+    name,
+    quantity: data.quantity,
+    defaultQuantity: data.default_quantity
+  }))
 
   if (error) {
     return (
@@ -131,8 +138,8 @@ export default function InventoryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {inventory.map((item) => (
-                    <TableRow key={item.id}>
+                  {inventoryItems.map((item) => (
+                    <TableRow key={item.name}>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.quantity}</TableCell>
                       <TableCell>{item.defaultQuantity}</TableCell>

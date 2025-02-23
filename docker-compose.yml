@@ -19,25 +19,25 @@ services:
       POSTGRES_USER: "user"  
       POSTGRES_PASSWORD: "pass"  
 
-  # api:
-  #   container_name: api
-  #   build: api
-  #   ports:
-  #     - '5000:5000'
-  #   environment:
-  #     POSTGRES_HOST: db
-  #     POSTGRES_PORT: "5432"
-  #     POSTGRES_USER: "user"  
-  #     POSTGRES_PASSWORD: "pass"  
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-
-  frontend:
-    build:
-      ax/
+  api:
+    container_name: api
+    build: api
     ports:
-      - '3000:3000'
+      - '5000:5000'
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: "user"  
+      POSTGRES_PASSWORD: "pass"  
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # frontend:
+  #   build:
+  #     ax/
+  #   ports:
+  #     - '3000:3000'
 
 volumes:
   pgdata:
