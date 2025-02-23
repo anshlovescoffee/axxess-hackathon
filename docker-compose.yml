@@ -2,6 +2,17 @@ services:
   api:
     build: api/
 
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: pass # Example password 
+    volumes:
+      - pgdata:/var/lib/postgresql/data 
+
   # frontend:
   #   build:
   #     hospice-frontend/
+
+volumes:
+  pgdata:
