@@ -1,3 +1,5 @@
+import os
+import pandas as pd
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import pandas as pd
@@ -39,10 +41,6 @@ conn.close()
 @app.route("/")
 def home():
     return jsonify({"message": "Welcome to the Hospice Management API"})
-  
-@app.route('/inventory')
-def get_inventory():
-    return jsonify(inventory.to_dict(orient='index'))
 
 @app.route('/inventory_search')
 def get_inventory_item():
@@ -192,5 +190,8 @@ def cleanup():
     conn.close()
 atexit.register(cleanup)
 
+@app.route('/inventory', methods=['GET'])
+def get_inventory():
+    return jsonify(inventory.to_dict(orient='index'))
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
