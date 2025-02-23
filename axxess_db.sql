@@ -29,6 +29,7 @@ CREATE TABLE Visitation_log (
     Heart_Rate INT,
     bp_systolic INT,
     bp_diastolic INT,
+    Temp INT,
     CONSTRAINT systolic_check CHECK (bp_systolic BETWEEN 60 AND 250),
     CONSTRAINT diastolic_check CHECK (bp_diastolic BETWEEN 40 AND 180),
     FOREIGN KEY (PID) REFERENCES Patients(PID)
