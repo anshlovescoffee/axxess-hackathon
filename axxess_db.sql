@@ -4,7 +4,7 @@ CREATE TABLE Patients (
 	PID INT PRIMARY KEY,
     DOB DATE,
     P_Name VARCHAR(50),
-    SSN INT,
+    SSN VARCHAR(50),
     Address VARCHAR(50),
     Zipcode INT,
     State_Abv CHAR(2),
@@ -44,6 +44,5 @@ CREATE TABLE Patient_Meds (
 	Remaining INT,
     Exp_Date DATE,
     FOREIGN KEY (PID) REFERENCES Patients(PID),
-    FOREIGN KEY (Med_Name) REFERENCES Med(Med_Name)
 );
 
