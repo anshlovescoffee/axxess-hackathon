@@ -29,10 +29,13 @@ def get_inventory():
 
 @app.route('/inventory_search')
 def get_inventory_item():
-    search_term = request.args.get('search_term').lower()
-    result = inventory.loc[inventory['item'] == search_term]
+    search_term = request.args.get('search_term')
 
-    return jsonify(result.to_dict(orient='list'))
+    if not search_term:
+        return jsonify({'message': 'No search term given'})
+
+    result = inventory.loc[inventory.index == search_term]
+    return jsonify(result.to_dict(orient='index'))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True) 
