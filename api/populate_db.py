@@ -32,24 +32,25 @@ def populate_db(conn):
     ''')
     conn.commit()
 
-    # cursor.execute('''
-    #     CREATE TABLE IF NOT EXISTS Visitation_log (
-    #      PID INT PRIMARY KEY,
-    #         N_Name VARCHAR(50),
-    #         P_Name VARCHAR(50),
-    #         Date_of_visitation DATE,
-    #         Notes VARCHAR(1500),
-    #         Respiratory_Rate INT,
-    #         Heart_Rate INT,
-    #         bp_systolic INT,
-    #         bp_diastolic INT,
-    #         Temp INT,
-    #         CONSTRAINT systolic_check CHECK (bp_systolic BETWEEN 60 AND 250),
-    #         CONSTRAINT diastolic_check CHECK (bp_diastolic BETWEEN 40 AND 180),
-    #         FOREIGN KEY (PID) REFERENCES Patients(PID)
-    #     );
-    # ''')
-    # conn.commit()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Visitation_log (
+	        PID BIGINT PRIMARY KEY,
+            N_Name VARCHAR(50),
+            P_Name VARCHAR(50),
+            Date_of_visitation DATE,
+            Notes VARCHAR(1500),
+            Respiratory_Rate INT,
+            Heart_Rate INT,
+            bp_systolic INT,
+            bp_diastolic INT,
+            Temp INT,
+            FOREIGN KEY (PID) REFERENCES Patients(PID)
+        );
+    ''')
+
+    #CONSTRAINT systolic_check CHECK (bp_systolic BETWEEN 60 AND 250),
+    #CONSTRAINT diastolic_check CHECK (bp_diastolic BETWEEN 40 AND 180),
+    conn.commit()
 
     patients = pd.read_csv('patients.csv')
     try:
@@ -91,10 +92,34 @@ def populate_db(conn):
                 conn.rollback()  # Reset failed transaction
                 continue  # Skip to next row
         conn.commit()
+
+        # Add visits
+        visits = pd.read_csv('visits.csv')
+
+        for index, row in visits.iterrows():
+            cursor.execute("""
+            INSERT INTO Visitation_log 
+                (PID, N_Name, P_Name, Date_of_visitation, Notes, Respiratory_Rate, Heart_Rate, bp_systolic, bp_diastolic, Temp)
+            VALUES 
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (PID) DO NOTHING  -- Skip duplicates
+            """, (
+                row['pid'],
+                row['nurse'],
+                row['name'],
+                pd.to_datetime(row['date']).strftime('%Y-%m-%d'),
+                row['notes'],
+                row['respiratory_rate'],
+                row['heart_rate'],
+                row['bp_diastolic'],
+                row['bp_systolic'],
+                row['temperature']
+            ))
+        conn.commit()
+
     except Exception as e:
         print(f"Unexpected error: {e}")
         conn.rollback()
 
     finally:
         cursor.close()
-
