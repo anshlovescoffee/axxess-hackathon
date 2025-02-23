@@ -6,7 +6,8 @@ CREATE TABLE Patients (
     SSN INT(9),
     Address VARCHAR(50),
     Zipcode INT(5),
-    State_Abv CHAR(2)
+    State_Abv CHAR(2),
+    Phone INT(10)
 );
 CREATE TABLE Patient_measurements (
 	PID INT PRIMARY KEY,
