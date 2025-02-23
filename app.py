@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
-from Cryptodome.Cipher import AES
+from Crypto.Cipher import AES
 import base64
+import requests
 import psycopg2
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app, resources={r"/scan": {"origins": "*"}})
@@ -12,11 +14,11 @@ key = b'RY/5+Ks4taJLTNgik7YS9ZkWjsmLb/8C'
 
 # PostgreSQL connection config
 db_config = {
-    'host': 'db',
-    'port': '5432',
-    'database': 'db',
-    'user': 'user',
-    'password': 'pass'
+    'host': os.environ.get('POSTGRES_HOST'),
+    'port': os.environ.get('POSTGRES_PORT'),
+    'database': os.environ.get('POSTGRES_DB'),
+    'user': os.environ.get('POSTGRES_USER'),
+    'password': os.environ.get('POSTGRES_PASSWORD')
 }
 
 def decrypt_data(encrypted_data):
@@ -41,10 +43,14 @@ def scan_qr_code():
         cursor = conn.cursor()
 
         # PostgreSQL syntax is slightly different
-        cursor.execute(
-            "UPDATE inventory SET total_quantity = total_quantity - %s WHERE med_id = %s RETURNING med_id",
-            (int(quantity), int(med_id))
-        )
+        url = "http://localhost:5001/scan"  # Replace with your API endpoint
+
+        # Optional parameters
+        params = {  'item': med_id,'change': quantity }
+        headers = {"Authorization": "Bearer token"}
+        timeout = 5  # seconds
+
+        response = requests.post(url, params=params, headers=headers, timeout=timeout)
 
         # Check if any row was updated
         if cursor.rowcount == 0:

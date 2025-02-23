@@ -22,4 +22,4 @@ def generate_qr_code(med_id, quantity):
     img.save(f"med_{med_id}_qr.png")
 
 # Example usage
-generate_qr_code(med_id=1, quantity=5)
+generate_qr_code(med_id='morphine', quantity=5)
