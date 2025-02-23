@@ -1,0 +1,30 @@
+item,quantity_unit,quantity,restock_threshold
+wheelchair,each,10,5
+bandages,box,100,50
+syringes,each,200,100
+insulin,vial,30,10
+antibiotics,pill,500,200
+scalpel,each,15,5
+crutches,pair,25,10
+ibuprofen,mg,1000,500
+gauze,roll,75,30
+paracetamol,mg,500,200
+oxygen tank,each,5,2
+stethoscope,each,12,5
+gloves,box,500,200
+face mask,box,300,100
+morphine,mg,100,50
+saline solution,liter,20,5
+defibrillator,each,3,1
+thermometer,each,50,10
+epinephrine,mg,30,10
+amoxicillin,pill,600,300
+blood pressure monitor,each,8,2
+antiseptic wipes,box,250,100
+cotton swabs,box,1000,400
+eye drops,bottle,50,20
+hydrocortisone cream,tube,40,15
+lancets,box,500,250
+test strips,box,200,100
+betadine,bottle,100,50
+fentanyl patch,patch,20,5
