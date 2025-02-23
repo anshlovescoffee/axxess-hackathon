@@ -29,9 +29,26 @@ CREATE TABLE Visitation_log (
     bp_diastolic INT,
     measurement_time TIMESTAMP,
     CONSTRAINT systolic_check CHECK (bp_systolic BETWEEN 60 AND 250),
-    CONSTRAINT diastolic_check CHECK (bp_diastolic BETWEEN 40 AND 180)
+    CONSTRAINT diastolic_check CHECK (bp_diastolic BETWEEN 40 AND 180),
+    FOREIGN KEY (PID) REFERENCES Patients(PID),
+    FOREIGN KEY (P_Name) REFERENCES Patients(P_Name)
 );
 
-CREATE TABLE Test(
-PID INT PRIMARY KEY
+CREATE TABLE Med (
+	Med_Name CHAR(50) PRIMARY KEY,
+    Total_Amount DECIMAL(3,2),
+    Unit CHAR(10)
 );
+
+CREATE TABLE Patient_Meds (
+	PID INT PRIMARY KEY,
+    Med_Name CHAR(50),
+    Dosage DECIMAL(3.2),
+    Unit CHAR(10),
+	Remaining DECIMAL(3,2),
+    Exp_Date DATE,
+    FOREIGN KEY (PID) REFERENCES Patients(PID),
+    FOREIGN KEY (Med_Name) REFERENCES Med(Med_Name),
+    FOREIGN KEY (UNIT) REFERENCES Med(Unit)
+);
+    
