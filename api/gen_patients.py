@@ -94,12 +94,13 @@ def generate_weight():
 def generate_nurse():
     return f"{random.choice(first_names)} {random.choice(last_names)}"
 
-def generate_random_date(start_year=2020, end_year=2025):
+def generate_random_date(delta=None, start_year=2020, end_year=2025):
     """Generate a random date between start_year and end_year."""
     start_date = datetime(start_year, 1, 1)
     end_date = datetime(end_year, 12, 31)
     random_days = random.randint(0, (end_date - start_date).days)
-    return (start_date + timedelta(days=random_days)).strftime("%Y-%m-%d")
+
+    return (start_date + timedelta(days=random_days)).strftime("%Y-%m-%d") if not delta else (start_date + timedelta(days=random_days))
 
 def generate_heart_rate():
     return random.randint(55, 100)
@@ -151,6 +152,7 @@ visits_amt = 9
 for i in patients.index:
     log = pd.DataFrame({
         'pid': [patients['pid'][i] for _ in range(visits_amt)],
+        'name': [patients['name'][i] for _ in range(visits_amt)],
         'nurse': [generate_nurse() for _ in range(visits_amt)],
         'date': [generate_random_date() for _ in range(visits_amt)],
         'heart_rate': [generate_heart_rate() for _ in range(visits_amt)],
@@ -158,7 +160,9 @@ for i in patients.index:
         'notes': 'Some notes here',
         'respiratory_rate': [random.randint(12, 20) for _ in range(visits_amt)],
         'temperature': [random.randint(97, 100) for _ in range(visits_amt)],
+        'date': [generate_random_date(delta=True) for _ in range(visits_amt)]
     })
+
     for i in log.index: 
         bp = generate_bp()
         log.loc[i, 'bp_systolic'] = bp[0]
@@ -169,9 +173,8 @@ for i in patients.index:
 visits_df = pd.concat(visits)
 visits_df.reset_index(inplace=True)
 visits_df.sort_values(by='date', inplace=True)
-visits_df.set_index('date', inplace=True)
-visits_df.drop(columns=['index'], inplace=True)
-
+# visits_df.set_index('date', inplace=True)
+# visits_df.drop(columns=['index'], inplace=True)
 
 # Medicine
 spec_medications = [
