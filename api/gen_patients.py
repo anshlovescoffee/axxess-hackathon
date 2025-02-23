@@ -57,15 +57,33 @@ states = [
     "NY", "CA", "IL", "TX", "AZ", "PA", "FL", "OH", "GA", "NC", "MI", "WA"
 ]
 
+combined = [
+    "New York City, NY", 
+    "Los Angeles, CA", 
+    "Chicago, IL", 
+    "Houston, TX", 
+    "Phoenix, AZ", 
+    "Philadelphia, PA", 
+    "San Antonio, TX", 
+    "San Diego, CA", 
+    "Dallas, TX", 
+    "San Jose, CA", 
+    "Austin, TX", 
+    "Jacksonville, FL"
+]
+
+def generate_random_city_state():
+    return random.choice(combined)
+
 def generate_random_address():
     street_number = random.randint(100, 9999)
     street_name = random.choice(street_names)
     street_type = random.choice(street_types)
-    city = random.choice(cities)
-    state = random.choice(states)
-    zip_code = f"{random.randint(10000, 99999)}"
-    
-    return f"{street_number} {street_name} {street_type}, {city}, {state} {zip_code}", zip_code 
+
+    return f'{street_number}, {street_name}, {street_type}'
+
+def generate_zip():
+    return random.randint(10000, 99999)
 
 def generate_sex():
     return random.choice([0, 1])
@@ -96,23 +114,29 @@ patients = pd.DataFrame()
 visits = []
 
 num_rows = 100
-string_length = 20
-rand_arr = generate_random_address() 
+string_length = 10
 
 patients = pd.DataFrame({
     'pid': [generate_pid(string_length) for _ in range(num_rows)],
     'ssn': [generate_ssn(10) for _ in range(num_rows)],
     'name': [generate_name() for _ in range(num_rows)],
-    'address': [rand_arr[0] for _ in range(num_rows)],
-    'zip': [rand_arr[1] for _ in range(num_rows)],
+    'address': [generate_random_address() for _ in range(num_rows)],
+    'zip': [generate_zip() for _ in range(num_rows)],
     'age': [generate_age() for _ in range(num_rows)],
     'sex': [generate_sex() for _ in range(num_rows)],
     'weight': [generate_weight() for _ in range(num_rows)],
     'height': [generate_height(3) for _ in range(num_rows)],
-    'phone': [generate_phone() for _ in range(num_rows)]
+    'phone': [generate_phone() for _ in range(num_rows)],
 })
 patients['dob'] = pd.to_datetime('now') - pd.to_timedelta(patients['age'] * 365, unit='day') - pd.DateOffset(days=random.randint(0, 365))
+patients['dob'] = patients['dob'].dt.normalize()
+patients['city_state'] = [generate_random_city_state() for _ in range(num_rows)]
 
+patients['city'] = patients['city_state'].apply(lambda x: x.split(',')[0])
+patients['state'] = patients['city_state'].apply(lambda x: x.split(',')[1].replace(' ', ''))
+
+patients.drop(columns=['city_state'], inplace=True)
+patients.drop_duplicates(subset=['pid'], inplace=True)
 
 '''
 Visit 
@@ -122,7 +146,7 @@ reason
 notes
 '''
 
-visits_amt = 5 
+visits_amt = 9 
 # Fill visit log for each patient
 for i in patients.index:
     log = pd.DataFrame({

@@ -3,4 +3,5 @@ numpy
 flask
 flask_cors
 psycopg2
+pycryptodome
 # asyncpg

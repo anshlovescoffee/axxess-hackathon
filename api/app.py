@@ -5,12 +5,22 @@ import numpy as np
 import psycopg2
 import os
 import atexit
+# from Cryptodome.Cipher import AES
+import base64
+from populate_db import populate_db
 
 app = Flask(__name__)
 CORS(app)
 
+key = b'RY/5+Ks4taJLTNgik7YS9ZkWjsmLb/8C'
+
 inventory = pd.read_csv('sample_data_ext.csv')
 inventory.set_index('item', inplace=True)
+
+# DB Stuff
+prescriptions = pd.read_csv('prescriptions.csv')
+visits = pd.read_csv('visits.csv')
+patients = pd.read_csv('patients.csv')
 
 # Insert data
 conn = psycopg2.connect( 
@@ -21,6 +31,10 @@ conn = psycopg2.connect(
     port=os.environ["POSTGRES_PORT"]
 ) 
 cursor = conn.cursor()
+populate_db(conn)
+conn.commit()
+cursor.close()
+conn.close()
 
 @app.route("/")
 def home():
@@ -63,6 +77,70 @@ def set_inventory_item():
     inventory.loc[inventory.index == item, 'quantity'] = inventory['quantity'] + change 
 
     return jsonify({'message': 'Success'})
+
+def decrypt_data(encrypted_data):
+    encrypted_data = base64.b64decode(encrypted_data)
+    nonce, tag, ciphertext = encrypted_data[:16], encrypted_data[16:32], encrypted_data[32:]
+    cipher = AES.new(key, AES.MODE_EAX, nonce)
+    return cipher.decrypt_and_verify(ciphertext, tag).decode()
+
+@app.route('/scan', methods=['POST'])
+def scan_qr_code():
+    data = request.json
+    encrypted_data = data['qr_data']
+    decrypted_data = decrypt_data(encrypted_data)
+    med_id, quantity = decrypted_data.split(',')
+
+    conn = psycopg2.connect(
+        database="db",
+        user=os.environ['POSTGRES_USER'],
+        password=os.environ['POSTGRES_PASSWORD'],
+        host=os.environ["POSTGRES_HOST"],
+        port=os.environ["POSTGRES_PORT"]
+    )
+    cursor = conn.cursor()
+    cursor.execute("UPDATE Inventory SET Total_Quantity = Total_Quantity - %s WHERE Med_ID = %s", (int(quantity), int(med_id)))
+    conn.commit()
+    cursor.close()
+
+    return jsonify({"status": "success", "med_id": med_id, "quantity": quantity})
+
+@app.route('/patients', methods=['GET'])
+def get_all_patients():
+    conn = psycopg2.connect(
+        database="db",
+        user=os.environ['POSTGRES_USER'],
+        password=os.environ['POSTGRES_PASSWORD'],
+        host=os.environ["POSTGRES_HOST"],
+        port=os.environ["POSTGRES_PORT"]
+    )
+    cursor = conn.cursor()
+
+    try:
+        # Fetch all patients from the database
+        cursor.execute("SELECT * FROM Patients;")
+        patients = cursor.fetchall()
+
+        # Convert results to a list of dictionaries
+        patients_list = []
+        column_names = [desc[0] for desc in cursor.description]  # Get column names
+        for patient in patients:
+            patients_list.append(dict(zip(column_names, patient)))
+
+        return jsonify({
+            "success": True,
+            "patients": patients_list
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+    finally:
+        cursor.close()
+        conn.close()
 
 def cleanup():
     cursor.close()
