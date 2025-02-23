@@ -37,7 +37,7 @@ export default function PatientsPage() {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await fetch('http://localhost:3000/patients1')
+        const response = await fetch('http://0.0.0.0:8000/patients')
         const text = await response.text()
         
         // Split the text into lines and parse each line

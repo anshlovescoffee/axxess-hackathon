@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, Search } from "lucide-react"
 import { AddItemModal } from "@/components/add-item-modal"
 
-const API_URL = "http://localhost:8000/api"
+const API_URL = "http://0.0.0.0:8000"
 
 export default function InventoryPage() {
   const [inventory, setInventory] = useState({})
